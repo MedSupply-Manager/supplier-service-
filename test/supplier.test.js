@@ -8,7 +8,7 @@ jest.mock("../src/models/cart", () => ({
 }));
 
 const Cart = require("../src/models/cart");
-const cartRouter = require("../src/routes/cart");
+const cartRouter = require("../src/routes/cartroutes");
 
 const app = express();
 app.use(express.json());
