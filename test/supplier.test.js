@@ -2,13 +2,13 @@ const request = require("supertest");
 const express = require("express");
 
 // Mock the Cart sequelize model BEFORE loading the router
-jest.mock("../models/cart", () => ({
+jest.mock("../src/models/cart", () => ({
   findAll: jest.fn(),
   create: jest.fn()
 }));
 
-const Cart = require("../models/cart");
-const cartRouter = require("../routes/cart");
+const Cart = require("../src/models/cart");
+const cartRouter = require("../src/routes/cart");
 
 const app = express();
 app.use(express.json());
