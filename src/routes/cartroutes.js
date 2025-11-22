@@ -1,7 +1,8 @@
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const Cart = require("../models/cart");
+const { getCartItems, addCartItem } = require('../controllers/cartController');
 
+<<<<<<< HEAD
 router.get("/", async (req, res) => {
   try {
     const cartItems = await Cart.findAll();
@@ -23,4 +24,9 @@ router.post("/", async (req, res) => {
   }
 });
 
+=======
+router.get("/", getCartItems);
+router.post("/", addCartItem);
+
+>>>>>>> d295d75 (added the route and control for the cart logic and checkout logic it's not fully lunchable tho)
 module.exports = router;

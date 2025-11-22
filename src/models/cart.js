@@ -9,11 +9,7 @@ const Cart = sequelize.define('CartItem', {
   },
   product_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: 'products',
-      key: 'id'
-    }
+    allowNull: false, // Just store the product id from Product Service
   },
   quantity: {
     type: DataTypes.INTEGER,
@@ -21,7 +17,8 @@ const Cart = sequelize.define('CartItem', {
     defaultValue: 1
   }
 }, {
-  tableName: 'cart_items'
+  tableName: 'cart_items',
+  timestamps: true
 });
 
 module.exports = Cart;
