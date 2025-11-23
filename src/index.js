@@ -1,15 +1,41 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
+// src/app.js
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import productRoutes from './routes/supplierRoutes.js';
 
-const productRoutes = require('./routes/supplierRoutes');
+// Load environment variables
+dotenv.config();
 
 const app = express();
+
+// ==============================
+// MIDDLEWARE
+// ==============================
 app.use(cors());
 app.use(express.json());
+
+// ==============================
+// ROUTES
+// ==============================
 app.use('/api/products', productRoutes);
 
-const PORT = process.env.PORT || 5002;
-app.listen(PORT, () => console.log(`🚀 Product Service running on port ${PORT}`));
+// ==============================
+// HEALTH CHECK ROUTE
+// ==============================
+app.get('/health', (req, res) => {
+  res.json({
+    status: '✅ Product Service running',
+    timestamp: new Date().toISOString()
+  });
+});
 
-module.exports = app; // for testing
+// ==============================
+// START SERVER
+// ==============================
+const PORT = process.env.PORT || 5002;
+app.listen(PORT, () => {
+  console.log(`🚀 Product Service running on port ${PORT}`);
+});
+
+export default app; // for testing
