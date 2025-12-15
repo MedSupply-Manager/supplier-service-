@@ -1,3 +1,4 @@
+// src/models/checkout.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
@@ -19,8 +20,8 @@ const Checkout = sequelize.define('Checkout', {
     type: DataTypes.ENUM('Credit Card', 'Debit Card', 'PayPal', 'Cash'),
     allowNull: false
   },
-  product_ids: {
-    type: DataTypes.JSON, // Store array of product ids
+  products: {
+    type: DataTypes.JSON, // Store array of { product_id, quantity }
     allowNull: false
   }
 }, {

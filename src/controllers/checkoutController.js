@@ -1,44 +1,64 @@
-const Cart = require('../models/cart');
-const Checkout = require('../models/checkout');
-const CheckoutItem = require('../models/checkoutItem');
+import axios from 'axios';
+import Cart from '../models/cart.js';
+import Checkout from '../models/checkout.js';
+import CheckoutItem from '../models/checkoutItem.js';
 
-// Create a new checkout
-exports.createCheckout = async (req, res) => {
+export const createCheckout = async (req, res) => {
   try {
-    const { name, family_name, phone_number, state, municipality, accumulated_price } = req.body;
+    const { name, accumulated_price, product_ids } = req.body;
 
-    // 1️⃣ Create checkout record
+
     const checkout = await Checkout.create({
-      name,
-      family_name,
-      phone_number,
-      state,
-      municipality,
-      total_amount: accumulated_price
+      establishment_name: name,
+      total_amount: accumulated_price,
+      payment_method: 'Cash',
+      products: product_ids
     });
 
-    // 2️⃣ Get cart items
+
     const cartItems = await Cart.findAll();
 
-    // 3️⃣ Save checkout items
+    if (!cartItems.length) {
+      return res.status(400).json({ error: 'Cart is empty' });
+    }
+
+
     const checkoutItemsData = cartItems.map(item => ({
       checkout_id: checkout.id,
       product_id: item.product_id,
       quantity: item.quantity
     }));
+
     await CheckoutItem.bulkCreate(checkoutItemsData);
 
-    // 4️⃣ Clear cart
+
+    const stockUpdates = checkoutItemsData.map(item => ({
+      productId: item.product_id,
+      quantityChange: -item.quantity // checkout removes stock
+    }));
+
+    try {
+      await axios.patch('http://localhost:3001/api/stock/change', {
+        items: stockUpdates,
+        checkoutId: checkout.id
+      });
+      console.log('✔ Stock updated');
+    } catch (err) {
+      console.error('❌ Could not update stock:', err.response?.data || err.message);
+     
+    }
+    
+
     await Cart.destroy({ where: {} });
 
-    // 5️⃣ Send response
     res.status(201).json({
-      message: 'Checkout successful',
-      checkout_id: checkout.id,
+      message: 'Checkout completed successfully',
+      checkoutId: checkout.id,
       items: checkoutItemsData
     });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ error: 'Internal server error' });
+
+  } catch (error) {
+    console.error('Checkout error:', error);
+    res.status(500).json({ error: 'Checkout failed' });
   }
 };

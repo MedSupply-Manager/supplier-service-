@@ -2,27 +2,24 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import productRoutes from './routes/supplierRoutes.js';
+import sequelize from './config/config.js';
+
+import checkoutroute from './routes/checkoutroutes.js';
+import cartRoutes from './routes/cartroutes.js';
 
 // Load environment variables
 dotenv.config();
 
 const app = express();
 
-// ==============================
-// MIDDLEWARE
-// ==============================
+// Middlewares
 app.use(cors());
 app.use(express.json());
 
-// ==============================
-// ROUTES
-// ==============================
-app.use('/api/products', productRoutes);
+// Routes
+app.use('/api/cart', cartRoutes);
+app.use('/api/checkout', checkoutroute);
 
-// ==============================
-// HEALTH CHECK ROUTE
-// ==============================
 app.get('/health', (req, res) => {
   res.json({
     status: '✅ Product Service running',
@@ -30,12 +27,20 @@ app.get('/health', (req, res) => {
   });
 });
 
-// ==============================
-// START SERVER
-// ==============================
-const PORT = process.env.PORT || 5002;
-app.listen(PORT, () => {
-  console.log(`🚀 Product Service running on port ${PORT}`);
-});
+// Connect to database before starting server
+(async () => {
+  try {
+    await sequelize.authenticate();
+    console.log('✅ MySQL connected');
+  } catch (err) {
+    console.error('❌ Database connection failed:', err);
+    process.exit(1);
+  }
 
-export default app; // for testing
+  const PORT = process.env.PORT || 5002;
+  app.listen(PORT, () => {
+    console.log(`🚀 Product Service running on port ${PORT}`);
+  });
+})();
+
+export default app;
