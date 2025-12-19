@@ -1,4 +1,4 @@
-// src/models/checkout.js
+// In your Checkout model file (src/models/checkout.js)
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
@@ -21,7 +21,7 @@ const Checkout = sequelize.define('Checkout', {
     allowNull: false
   },
   products: {
-    type: DataTypes.JSON, // Store array of { product_id, quantity }
+    type: DataTypes.JSON,
     allowNull: false
   }
 }, {

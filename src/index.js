@@ -6,6 +6,9 @@ import sequelize from './config/config.js';
 
 import checkoutroute from './routes/checkoutroutes.js';
 import cartRoutes from './routes/cartroutes.js';
+import manufacturersRoutes from './routes/manufacturers.js';
+
+
 
 // Load environment variables
 dotenv.config();
@@ -19,6 +22,8 @@ app.use(express.json());
 // Routes
 app.use('/api/cart', cartRoutes);
 app.use('/api/checkout', checkoutroute);
+app.use('/api/manufacturers', manufacturersRoutes);
+
 
 app.get('/health', (req, res) => {
   res.json({

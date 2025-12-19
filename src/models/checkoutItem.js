@@ -1,6 +1,6 @@
-import { DataTypes } from 'sequelize';
-import sequelize from '../config/database.js';
-import Checkout from './checkout.js';
+// In your CheckoutItem model file (src/models/checkoutItem.js)
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
 
 const CheckoutItem = sequelize.define('CheckoutItem', {
   id: {
@@ -10,12 +10,7 @@ const CheckoutItem = sequelize.define('CheckoutItem', {
   },
   checkout_id: {
     type: DataTypes.INTEGER,
-    allowNull: false,
-    references: {
-      model: Checkout,
-      key: 'id'
-    },
-    onDelete: 'CASCADE'
+    allowNull: false
   },
   product_id: {
     type: DataTypes.INTEGER,
@@ -31,4 +26,4 @@ const CheckoutItem = sequelize.define('CheckoutItem', {
   timestamps: true
 });
 
-export default CheckoutItem;
+module.exports = CheckoutItem;
